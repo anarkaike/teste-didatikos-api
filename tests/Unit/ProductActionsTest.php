@@ -106,12 +106,28 @@ class ProductActionsTest extends TestCase
         $product = Product::factory()->create([
             'brand_id' => Brand::factory()->create()->id,
             'city_id' => City::factory()->create()->id,
+            'stock' => 0
         ])->toArray();
 
         $deleteProductAction = new DeleteProduct();
         $deleteProductAction->handler(...$product);
 
         $this->assertFalse(Product::where('id', $product['id'])->exists());
+    }
+
+    public function test_delete_product_error_with_stock()
+    {
+        Auth::login(User::factory()->create());
+        $product = Product::factory()->create([
+            'brand_id' => Brand::factory()->create()->id,
+            'city_id' => City::factory()->create()->id,
+            'stock' => 100
+        ])->toArray();
+
+        $deleteProductAction = new DeleteProduct();
+
+        $this->expectException(\Exception::class);
+        $deleteProductAction->handler(...$product);
     }
 
     public function test_delete_product_exception()

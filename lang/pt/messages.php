@@ -21,6 +21,7 @@ return [
         'error_inserting' => 'Erro ao inserir um produto',
         'error_updating' => 'Erro ao atualizar o produto',
         'error_deleting' => 'Erro ao deletar o produto',
+        'error_deleting_with_stock' => 'Não é possível excluir um produto com estoque.',
         'id_required' => 'ID do produto é obrigatório',
         'not_found' => 'Produto não encontrado!',
     ],

@@ -51,7 +51,8 @@ class ProductTest extends ApiTestCase
 
         foreach ($products as $k => $product) {
             foreach (['name', 'price', 'brand_id', 'stock', 'city_id', 'created_by'] as $field) {
-                $response->assertJsonPath(path: "data.$k.$field", expect: $product->$field);
+                $val = $field === 'price' || $field === 'stock' ? (float) number_format($product->$field, 2) : $product->$field;
+                $response->assertJsonPath(path: "data.$k.$field", expect: $val);
             }
         }
     }
@@ -200,7 +201,7 @@ class ProductTest extends ApiTestCase
         $brand  = Brand::factory()->create();
         $city   = City::factory()->create();
 
-        $product = Product::factory()->create(['brand_id' => $brand->id, 'city_id' => $city->id,]);
+        $product = Product::factory()->create(['brand_id' => $brand->id, 'city_id' => $city->id, 'stock' => 0]);
 
         $response = $this->token()->delete(uri: '/api/v1/products/' . $product->id);
         $response->assertStatus(status: 200);

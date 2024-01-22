@@ -12,7 +12,11 @@ class DeleteProduct extends Action {
      */
     public function handler(...$args): bool
     {
-        if(!$this->getById(id: $args['id'])->delete()) {
+        $product = $this->getById(id: $args['id']);
+        if ($product->stock > 0) {
+            throw new \Exception(message: trans(key: 'messages.products.error_deleting_with_stock'));
+        }
+        if(!$product->delete()) {
             throw new \Exception(message: trans(key: 'messages.products.error_deleting'));
         }
 

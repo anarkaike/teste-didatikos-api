@@ -38,16 +38,16 @@ class Handler extends ExceptionHandler
                     $modelNotFound = $e->getPrevious();
                     switch ($modelNotFound->getModel()) {
                         case Product::class:
-                            $message = 'Produto não encontrado';
+                            $message = trans(key: 'messages.products.not_found');
                             break;
                         case Brand::class:
-                            $message = 'Marca não encontrada';
+                            $message = trans(key: 'messages.brands.not_found');
                             break;
                         case City::class:
-                            $message = 'Cidade não encontado';
+                            $message = trans(key: 'messages.cities.not_found');
                             break;
                         case User::class:
-                            $message = 'Usuário não encontado';
+                            $message = trans(key: 'messages.users.not_found');
                             break;
                     }
                 }

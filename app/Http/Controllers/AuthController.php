@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Users\StoreUser;
-use App\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\{
     Http\Request,

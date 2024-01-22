@@ -48,6 +48,26 @@ class BrandTest extends ApiTestCase
     }
 
     /**
+     * Testando listagem com retorno vazio
+     * Verifica um retorno com sucesso para o end point GET /brands
+     *
+     * @test
+     */
+    public function check_list_return_no_data(): void
+    {
+        $response = $this->token()->get(uri: '/api/v1/brands');
+        $response->assertStatus(status: 200);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.brands.listing_successfully'));
+        $response->assertJsonCount(count: 0, key: 'data');
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'metadata'
+        ]);
+    }
+
+    /**
      * Testando criação de marca
      * Verifica um retorno com sucesso para o end point POST /brands
      *
@@ -67,6 +87,24 @@ class BrandTest extends ApiTestCase
         ]);
 
         $response->assertJsonPath(path: "data.name", expect: $brand['name']);
+    }
+
+    /**
+     * Testando criação de marca com erro, quando deixamos de mandar os parametros
+     * Verifica um retorno com sucesso para o end point POST /brands
+     *
+     * @test
+     */
+    public function check_create_return_with_error(): void
+    {
+        $response = $this->token()->post(uri: '/api/v1/brands');
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'validation.invalid_data'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data'
+        ]);
     }
 
     /**
@@ -98,6 +136,25 @@ class BrandTest extends ApiTestCase
     }
 
     /**
+     * Testando atualização de marca com erro quando enviamos codigo inexistente
+     * Verifica um retorno com sucesso para o end point PUT /brands/{id}
+     *
+     * @test
+     */
+    public function check_update_return_with_error(): void
+    {
+        Brand::factory()->create();
+        $response = $this->token()->put(uri: '/api/v1/brands/99999');
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.brands.not_found'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data'
+        ]);
+    }
+
+    /**
      * Testando exclusão de marca
      * Verifica um retorno com sucesso para o end point DELETE /brands/{id}
      *
@@ -117,5 +174,24 @@ class BrandTest extends ApiTestCase
         ]);
 
         $this->assertNull(Brand::find($brand->id));
+    }
+
+    /**
+     * Testando exclusão de marca com erro quando enviados codigo inexistente
+     * Verifica um retorno com sucesso para o end point DELETE /brands/{id}
+     *
+     * @test
+     */
+    public function check_delete_return_with_error(): void
+    {
+        Brand::factory()->create();
+        $response = $this->token()->delete(uri: '/api/v1/brands/99999');
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.brands.not_found'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data'
+        ]);
     }
 }

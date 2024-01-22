@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string(column: 'name', length: 100);
             $table->string(column: 'manufacturer', length: 255)->nullable();
-            $table->timestamps();
+            $table->timestamp(column: 'created_at')->useCurrent();
+            $table->timestamp(column: 'updated_at')->useCurrentOnUpdate()->nullable()->default(value: null);
         });
     }
 

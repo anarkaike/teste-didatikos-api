@@ -13,7 +13,7 @@ class UpdateProduct extends Action {
     public function handler(...$args): Product
     {
         $product = $this->getById(id: $args['id']);
-        if(false === $product->fill($args)->update()) {
+        if(false === $product->update($args)) {
             throw new \Exception(message: trans(key: 'messages.products.error_updating'));
         }
 

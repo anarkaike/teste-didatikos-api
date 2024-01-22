@@ -17,10 +17,11 @@ return new class extends Migration
             $table->float(column: 'price');
             $table->foreignId(column: 'brand_id')->constrained(table: 'brands', indexName: 'products_brand_id');
             $table->float(column: 'stock')->nullable()->default(value: 0);
-            $table->foreignId(column: 'city_id')->constrained(table: 'cities', indexName: 'products_city_id');
+            $table->foreignId(column: 'city_id')->nullable()->default(value: null)->constrained(table: 'cities', indexName: 'products_city_id');
             $table->foreignId(column: 'created_by')->constrained(table: 'users', indexName: 'products_created_by');
             $table->foreignId(column: 'updated_by')->nullable()->constrained(table: 'users', indexName: 'products_updated_by');
-            $table->timestamps();
+            $table->timestamp(column: 'created_at')->useCurrent();
+            $table->timestamp(column: 'updated_at')->useCurrentOnUpdate()->nullable()->default(value: null);
         });
     }
 

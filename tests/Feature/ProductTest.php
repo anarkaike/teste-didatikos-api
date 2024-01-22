@@ -57,6 +57,26 @@ class ProductTest extends ApiTestCase
     }
 
     /**
+     * Testando listagem de produtos vazio
+     * Verifica um retorno com sucesso para o end point GET /products
+     *
+     * @test
+     */
+    public function check_list_return_with_no_data(): void
+    {
+        $response = $this->token()->get(uri: '/api/v1/products');
+        $response->assertStatus(status: 200);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.products.listing_successfully'));
+        $response->assertJsonCount(count: 0, key: 'data');
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'metadata'
+        ]);
+    }
+
+    /**
      * Testando criação de produto
      * Verifica um retorno com sucesso para o end point POST /products
      *
@@ -84,6 +104,24 @@ class ProductTest extends ApiTestCase
         foreach (['name', 'price', 'brand_id', 'stock', 'city_id'] as $field) {
             $response->assertJsonPath(path: "data.$field", expect: $product[$field]);
         }
+    }
+
+    /**
+     * Testando criação de produto com erro quando deixamos de enviar os dados
+     * Verifica um retorno com sucesso para o end point POST /products
+     *
+     * @test
+     */
+    public function check_create_return_with_error(): void
+    {
+        $response = $this->token()->post(uri: '/api/v1/products');
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'validation.invalid_data'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
     }
 
     /**
@@ -121,6 +159,36 @@ class ProductTest extends ApiTestCase
     }
 
     /**
+     * Testando atualização de produto com erro quando enviamos id inexistente
+     * Verifica um retorno com sucesso para o end point PUT /products/{id}
+     *
+     * @test
+     */
+    public function check_update_return_with_error(): void
+    {
+        Auth::login(User::factory()->create());
+        $brand  = Brand::factory()->create();
+        $city   = City::factory()->create();
+        $newBrand  = Brand::factory()->create();
+        $newCity   = City::factory()->create();
+
+        $product = Product::factory()->create(['brand_id' => $brand->id, 'city_id' => $city->id,]);
+        $productForUpdate = Product::factory()->definition();
+        $productForUpdate['brand_id'] = $newBrand->id;
+        $productForUpdate['city_id'] = $newCity->id;
+        unset($productForUpdate['id']);
+
+        $response = $this->token()->put(uri: '/api/v1/products/9999', data: $productForUpdate);
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.products.not_found'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+    }
+
+    /**
      * Testando exclusão de produto
      * Verifica um retorno com sucesso para o end point DELETE /products/{id}
      *
@@ -145,5 +213,29 @@ class ProductTest extends ApiTestCase
         ]);
 
         $this->assertNull(Product::find($product->id));
+    }
+
+    /**
+     * Testando exclusão de produto com erro quando enviamos id inexistente
+     * Verifica um retorno com sucesso para o end point DELETE /products/{id}
+     *
+     * @test
+     */
+    public function check_delete_return_with_error(): void
+    {
+        Auth::login(User::factory()->create());
+        $brand  = Brand::factory()->create();
+        $city   = City::factory()->create();
+
+        $product = Product::factory()->create(['brand_id' => $brand->id, 'city_id' => $city->id,]);
+
+        $response = $this->token()->delete(uri: '/api/v1/products/99999');
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.products.not_found'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
     }
 }

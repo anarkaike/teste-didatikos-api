@@ -13,6 +13,7 @@ return [
     |
     */
 
+    'invalid_data' => 'Os dados enviados não estão corretos ou estão faltando.',
     'accepted' => 'O campo :attribute deve ser aceito.',
     'accepted_if' => 'O campo :attribute deve ser aceito quando :other for :value.',
     'active_url' => 'O campo :attribute deve ser um URL válido.',

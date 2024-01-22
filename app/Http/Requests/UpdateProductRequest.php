@@ -23,7 +23,7 @@ class UpdateProductRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'name' => ['nullable', 'string', 'max:100', Rule::unique(table: 'products', column: 'name'),],
+            'name' => ['nullable', 'string', 'max:100',],
             'price' => ['nullable', 'decimal:0,2',],
             'brand_id' => ['nullable', 'integer', Rule::exists(table: 'brands', column: 'id'),],
             'stock' => ['nullable', 'decimal:0,2',],

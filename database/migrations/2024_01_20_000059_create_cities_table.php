@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create(table: 'cities', callback: function (Blueprint $table) {
             $table->id();
             $table->string(column: 'name', length: 100);
-            $table->timestamps();
+            $table->timestamp(column: 'created_at')->useCurrent();
+            $table->timestamp(column: 'updated_at')->useCurrentOnUpdate()->nullable()->default(value: null);
         });
     }
 

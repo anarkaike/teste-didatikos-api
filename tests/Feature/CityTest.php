@@ -48,6 +48,26 @@ class CityTest extends ApiTestCase
     }
 
     /**
+     * Testando listagem de cidades vazia
+     * Verifica um retorno com sucesso para o end point GET /cities
+     *
+     * @test
+     */
+    public function check_list_return_with_error(): void
+    {
+        $response = $this->token()->get(uri: '/api/v1/cities');
+        $response->assertStatus(status: 200);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.cities.listing_successfully'));
+        $response->assertJsonCount(count: 0, key: 'data');
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'metadata'
+        ]);
+    }
+
+    /**
      * Testando criação de cidade
      * Verifica um retorno com sucesso para o end point POST /cities
      *
@@ -67,6 +87,24 @@ class CityTest extends ApiTestCase
         ]);
 
         $response->assertJsonPath(path: "data.name", expect: $city['name']);
+    }
+
+    /**
+     * Testando criação de cidade com erro quando deixamos de enviar os dados
+     * Verifica um retorno com sucesso para o end point POST /cities
+     *
+     * @test
+     */
+    public function check_create_return_with_error(): void
+    {
+        $response = $this->token()->post(uri: '/api/v1/cities');
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'validation.invalid_data'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data'
+        ]);
     }
 
     /**
@@ -93,6 +131,26 @@ class CityTest extends ApiTestCase
     }
 
     /**
+     * Testando atualização de cidade com erro quando enviamos um codigo inexistente
+     * Verifica um retorno com sucesso para o end point PUT /cities/{id}
+     *
+     * @test
+     */
+    public function check_update_return_with_error(): void
+    {
+        City::factory()->create();
+        $newName = fake()->city();
+        $response = $this->token()->put(uri: '/api/v1/cities/9999', data: ['name' => $newName]);
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.cities.not_found'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+    }
+
+    /**
      * Testando exclusão de cidade
      * Verifica um retorno com sucesso para o end point DELETE /cities/{id}
      *
@@ -112,5 +170,24 @@ class CityTest extends ApiTestCase
         ]);
 
         $this->assertNull(City::find($city->id));
+    }
+
+    /**
+     * Testando exclusão de cidade com erro quando enviamos um codigo inexisnte
+     * Verifica um retorno com sucesso para o end point DELETE /cities/{id}
+     *
+     * @test
+     */
+    public function check_delete_return_with_error(): void
+    {
+        $city = City::factory()->create();
+        $response = $this->token()->delete(uri: '/api/v1/cities/9999');
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.cities.not_found'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
     }
 }

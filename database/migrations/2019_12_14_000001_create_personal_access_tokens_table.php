@@ -19,7 +19,8 @@ return new class extends Migration
             $table->text(column: 'abilities')->nullable();
             $table->timestamp(column: 'last_used_at')->nullable();
             $table->timestamp(column: 'expires_at')->nullable();
-            $table->timestamps();
+            $table->timestamp(column: 'created_at')->useCurrent();
+            $table->timestamp(column: 'updated_at')->useCurrentOnUpdate()->nullable()->default(value: null);
         });
     }
 

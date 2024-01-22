@@ -70,6 +70,24 @@ class UserTest extends ApiTestCase
     }
 
     /**
+     * Testando criação de usuário com erro quando deixamos de enviar os dados
+     * Verifica um retorno com sucesso para o end point POST /users
+     *
+     * @test
+     */
+    public function check_create_return_with_error(): void
+    {
+        $response = $this->token()->post(uri: '/api/v1/users');
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'validation.invalid_data'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+    }
+
+    /**
      * Testando atualização de usuário
      * Verifica um retorno com sucesso para o end point PUT /users/{id}
      *
@@ -98,6 +116,29 @@ class UserTest extends ApiTestCase
     }
 
     /**
+     * Testando atualização de usuário com erro quando enviamos id inexistente
+     * Verifica um retorno com sucesso para o end point PUT /users/{id}
+     *
+     * @test
+     */
+    public function check_update_return_with_error(): void
+    {
+        $userNewData = [
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'password' => fake()->password(),
+        ];
+        $response = $this->token()->put(uri: '/api/v1/users/9999999', data: $userNewData);
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.users.not_found'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+    }
+
+    /**
      * Testando exclusão de usuário
      * Verifica um retorno com sucesso para o end point DELETE /users/{id}
      *
@@ -117,5 +158,23 @@ class UserTest extends ApiTestCase
         ]);
 
         $this->assertNull(User::find($user->id));
+    }
+
+    /**
+     * Testando exclusão de usuário com erro quando enviamos id inexistente
+     * Verifica um retorno com sucesso para o end point DELETE /users/{id}
+     *
+     * @test
+     */
+    public function check_delete_return_with_error(): void
+    {
+        $response = $this->token()->delete(uri: '/api/v1/users/999999');
+        $response->assertStatus(status: 400);
+        $response->assertJsonPath(path: "message", expect: trans(key: 'messages.users.not_found'));
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
     }
 }

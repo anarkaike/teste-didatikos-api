@@ -21,28 +21,28 @@ class DatabaseSeeder extends Seeder
         $user   = User::factory()->create();
         Auth::login(user: $user);
 
-        $brands = Brand::factory(count: 12)->create();
-        $cities = City::factory(count: 12)->create();
+        $brands = Brand::factory(count: 30)->create();
+        $cities = City::factory(count: 30)->create();
 
-        for ($i=0; $i < 30; $i++) {
-            if ($i >=0 && $i < 10) {
+        for ($i=0; $i < 150; $i++) {
+            if ($i >= 0 && $i < 50) {
                 Product::factory()->create(attributes: [
-                    'brand_id'      => $brands[rand(0, 3)]->id,
-                    'city_id'       => $cities[rand(0, 3)]->id,
+                    'brand_id'      => $brands[rand(0, 9)]->id,
+                    'city_id'       => $cities[rand(0, 9)]->id,
                     'created_by'    => $user->id,
                 ]);
             }
-            if ($i >=11 && $i < 20) {
+            if ($i >=51 && $i < 100) {
                 Product::factory()->create(attributes: [
-                    'brand_id'      => $brands[rand(4, 7)]->id,
-                    'city_id'       => $cities[rand(4, 7)]->id,
+                    'brand_id'      => $brands[rand(10, 19)]->id,
+                    'city_id'       => $cities[rand(10, 19)]->id,
                     'created_by'    => $user->id,
                 ]);
             }
-            if ($i >=20 && $i < 30) {
+            if ($i >=101 && $i < 150 ) {
                 Product::factory()->create(attributes: [
-                    'brand_id'      => $brands[rand(8, 11)]->id,
-                    'city_id'       => $cities[rand(8, 11)]->id,
+                    'brand_id'      => $brands[rand(20, 29)]->id,
+                    'city_id'       => $cities[rand(8, 29)]->id,
                     'created_by'    => $user->id,
                 ]);
             }

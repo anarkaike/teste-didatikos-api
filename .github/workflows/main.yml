@@ -36,7 +36,7 @@ jobs:
       # - name: Teste Junio
       #   run: echo "${{ FTP_HOST }}"
       #   env:
-      #     FTP_HOST: ${{ env.FTP_HOST }}
+      #     FTP_HOST: ${{ env.FTP_HOST }} novo teste
       - name: 📂 Sync files
         uses: kevinpainchaud/simple-ftp-deploy-action@v1.2.1
         with:
